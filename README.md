@@ -1,92 +1,45 @@
-# OnlineFoodOrderSystem
+# ONLINE FOOD ORDERING SYSTEM
 
-
-
-\## Proje Tasarımı (UML)
-
-
+## Proje Tasarımı (UML)
 
 ```mermaid
-
 classDiagram
+    %% İlişkiler
+    User <|-- Customer : Inheritance
+    Orderable <|.. Order : Realization
+    Customer "1" --> "*" Order : Association
+    Order *-- MenuItem : Composition
 
-&nbsp;   %% İlişkiler
+    %% Sınıflar
+    class User {
+        -String name
+        -String email
+        +User(name, email)
+    }
 
-&nbsp;   User <|-- Customer : Inheritance
+    class Customer {
+        -String address
+        -String phone
+        +Customer(name, email, address, phone)
+        +placeOrder() void
+    }
 
-&nbsp;   Orderable <|.. Order : Realization
+    class Orderable {
+        <<interface>>
+        +placeOrder() void
+        +calculateTotal() double
+    }
 
-&nbsp;   Customer "1" --> "\*" Order : Association
+    class Order {
+        -List items
+        -Customer customer
+        +addItem(MenuItem)
+        +calculateTotal() double
+    }
 
-&nbsp;   Order \*-- MenuItem : Composition
-
-
-
-&nbsp;   %% Sınıflar
-
-&nbsp;   class User {
-
-&nbsp;       -String name
-
-&nbsp;       -String email
-
-&nbsp;       +User(name, email)
-
-&nbsp;   }
-
-
-
-&nbsp;   class Customer {
-
-&nbsp;       -String address
-
-&nbsp;       -String phone
-
-&nbsp;       +Customer(name, email, address, phone)
-
-&nbsp;       +placeOrder() void
-
-&nbsp;   }
-
-
-
-&nbsp;   class Orderable {
-
-&nbsp;       <<interface>>
-
-&nbsp;       +placeOrder() void
-
-&nbsp;       +calculateTotal() double
-
-&nbsp;   }
-
-
-
-&nbsp;   class Order {
-
-&nbsp;       -List items
-
-&nbsp;       -Customer customer
-
-&nbsp;       +addItem(MenuItem)
-
-&nbsp;       +calculateTotal() double
-
-&nbsp;   }
-
-
-
-&nbsp;   class MenuItem {
-
-&nbsp;       -String name
-
-&nbsp;       -double price
-
-&nbsp;       +MenuItem(name, price)
-
-&nbsp;       +getPrice() double
-
-&nbsp;   }
-
-'''
-
+    class MenuItem {
+        -String name
+        -double price
+        +MenuItem(name, price)
+        +getPrice() double
+    }
