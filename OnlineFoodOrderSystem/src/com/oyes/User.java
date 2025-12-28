@@ -1,59 +1,41 @@
 package com.oyes;
 
-/**
- * Kullanıcıların ortak özelliklerini tutan temel sınıf.
- * Kapsülleme (Encapsulation) prensibine uygun olarak tasarlanmıştır.
- */
 public class User {
     
-    // Encapsulation: Değişkenler private (gizli) tutulur
     private String id;
     private String name;
     private String email;
-    
-    // Parametresiz Constructor (Gerektiğinde hata almamak için)
+    private String password; // YENİ EKLENEN KISIM
+
     public User() {
     }
 
-    // Parametreli Constructor
-    public User(String id, String name, String email) {
+    // Constructor güncellendi: Artık şifre de istiyor
+    public User(String id, String name, String email, String password) {
         this.id = id;
         this.name = name;
         this.email = email;
+        this.password = password;
     }
 
     // Getter ve Setter Metodları
-    public String getId() {
-        return id;
-    }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public String getName() {
-        return name;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    // Sisteme giriş simülasyonu
     public boolean login() {
         System.out.println(this.name + " sisteme giris yapti.");
         return true;
     }
     
-    // Kullanıcı bilgilerini yazdırmak için toString override ediyoruz
     @Override
     public String toString() {
         return "User{" + "name='" + name + '\'' + ", email='" + email + '\'' + '}';

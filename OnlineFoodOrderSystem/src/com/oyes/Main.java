@@ -5,21 +5,20 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("--- SİSTEM TESTİ BAŞLIYOR ---\n");
 
-        // 1. ADIM: Basit bir User (Kullanıcı) oluşturup test edelim
         System.out.println("1. User Testi:");
-        User u1 = new User("001", "Ahmet Hoca", "ahmet@gmail.com");
-        u1.login(); // User sınıfındaki metodu çağırdık
+        // Artık "1234" diye şifre de giriyoruz
+        User u1 = new User("001", "Ahmet Hoca", "ahmet@okul.edu", "1234");
+        u1.login(); 
         System.out.println(u1.toString()); 
         
         System.out.println("\n--------------------------\n");
 
-        // 2. ADIM: Bir Customer (Müşteri) oluşturup kalıtımı test edelim
         System.out.println("2. Customer (Müşteri) Testi:");
-        // Dikkat: Customer hem User özelliklerini (id, isim) hem kendi özelliklerini (adres) alır
-        Customer c1 = new Customer("002", "Gülbahar", "gul@mail.com", "Kadikoy, Istanbul", "555-1234");
+        // Müşteri için şifre: "pass987"
+        Customer c1 = new Customer("002", "Gülbahar", "gul@mail.com", "pass987", "Kadikoy, Istanbul", "555-1234");
         
-        c1.login();      // User'dan miras aldığı metot (ÇALIŞMALI)
-        c1.viewMenu();   // Customer'ın kendi metodu (ÇALIŞMALI)
+        c1.login();
+        c1.viewMenu();
         System.out.println("Müşteri Adresi: " + c1.getAddress());
 
         System.out.println("\n--- TEST BAŞARIYLA TAMAMLANDI ---");
