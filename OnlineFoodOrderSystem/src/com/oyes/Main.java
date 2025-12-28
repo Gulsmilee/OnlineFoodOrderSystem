@@ -18,6 +18,7 @@ public class Main {
         Customer c1 = new Customer("002", "Gülbahar", "gul@mail.com", "pass987", "Kadikoy, Istanbul", "555-1234");
         
         c1.login();
+        System.out.println("Gizli şifre kontrolü:"+ c1.getPassword());
         c1.viewMenu();
         System.out.println("Müşteri Adresi: " + c1.getAddress());
 
