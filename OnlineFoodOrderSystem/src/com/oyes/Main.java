@@ -24,28 +24,37 @@ public class Main {
         MenuItem m1 = new MenuItem("Adana Kebap", "Acili ve lezzetli", 220.0);
         MenuItem m2 = new MenuItem("Ayran", "Yayik ayran", 30.0);
         MenuItem m3 = new MenuItem("Kunefe", "Peynirli sicak tatli", 150.0);
-        System.out.println("Yemek oluşturuldu: " + m1.getName());
+        System.out.println("Yemekler hazirlandi.");
 
         System.out.println("\n--------------------------\n");
 
-        // 4. ADIM: Restaurant Testi (YENİ!)
+        // 4. ADIM: Restaurant Testi
         System.out.println("4. Restaurant Testi:");
-        
-        // Restoranı oluşturuyoruz
         Restaurant myRestaurant = new Restaurant("Lezzet Dunyasi", 4.8, "Besiktas, Istanbul");
-        System.out.println("Restoran Acildi: " + myRestaurant.getName());
+        myRestaurant.addMenuItem(m1);
+        myRestaurant.addMenuItem(m2);
+        myRestaurant.addMenuItem(m3);
+        System.out.println("Restoran menusu hazir.");
         
-        // Yemekleri menüye ekliyoruz
-        System.out.println(">> Yemekler menüye ekleniyor...");
-        myRestaurant.addMenuItem(m1); // Kebap
-        myRestaurant.addMenuItem(m2); // Ayran
-        myRestaurant.addMenuItem(m3); // Künefe
+        System.out.println("\n--------------------------\n");
+
+        // 5. ADIM: Order (Sipariş) Testi (YENİ!)
+        System.out.println("5. Sipariş Testi:");
         
-        // Menüyü ekrana basalım
-        System.out.println("\n--- GÜNCEL MENÜ ---");
-        for (MenuItem item : myRestaurant.getMenu()) {
-            System.out.println("- " + item.toString());
-        }
+        // Müşteri (c1), Restorandan (myRestaurant) sipariş veriyor
+        Order order1 = new Order("SIP-001", c1, myRestaurant);
+        
+        System.out.println(">> Sepete ürün ekleniyor...");
+        order1.addItem(m1); // 220 TL
+        order1.addItem(m2); // 30 TL
+        // Toplam 250 TL olmalı
+        
+        System.out.println("Sipariş Durumu: " + order1.getStatus());
+        System.out.println("Müşteri: " + order1.getCustomer().getName());
+        
+        // HESAPLAMA KONTROLÜ
+        double total = order1.calculateTotal();
+        System.out.println("TOPLAM TUTAR: " + total + " TL");
 
         System.out.println("\n--- TEST BAŞARIYLA TAMAMLANDI ---");
     }
