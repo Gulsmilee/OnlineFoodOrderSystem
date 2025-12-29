@@ -1,10 +1,14 @@
 package com.oyes;
 
+/**
+ * Menüdeki yemekleri temsil eder.
+ * Orderable arayüzünü (interface) uygular.
+ */
 public class MenuItem implements Orderable {
     
-    private String name;
-    private String description;
-    private double price;
+    private String name;        // Yemek adı
+    private String description; // Açıklama (Örn: "Acılı, bol soğanlı")
+    private double price;       // Fiyat
 
     public MenuItem() {
     }
@@ -15,6 +19,8 @@ public class MenuItem implements Orderable {
         this.price = price;
     }
 
+    // --- Orderable Interface'inden gelen zorunlu metodlar ---
+    // Bu metodlar olmak ZORUNDA 
     @Override
     public double getPrice() {
         return price;
@@ -24,13 +30,24 @@ public class MenuItem implements Orderable {
     public String getName() {
         return name;
     }
+    
+    
+    // Getter ve Setter Metodları
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public void setName(String name) { this.name = name; }
+    public String getDescription() {
+        return description;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-    public void setPrice(double price) { this.price = price; }
+    public void setPrice(double price) {
+        this.price = price;
+    }
 
     @Override
     public String toString() {
