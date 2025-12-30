@@ -41,6 +41,24 @@ public class Main {
         
         order1.completeOrder();//ödemeyi yap ve bitir
         
+        System.out.println("\n------------------------------------------------\n");
+        
+        //4. SEnaryo2: Nakit ile sipariş
+        System.out.println(">>>Senaryo2: Nakit ile Sipariş<<<");
+        Order order2= new Order("SIPARIS-002",c1,myRestaurant);
+        order2.addItem(m2);
+        order2.addItem(m3);
+        
+        System.out.println("Toplam Tutar:"+ order2.calculateTotal()+"TL");
+        
+        //Polimorfizm:PaymentMethod tipinde CashPayment oluşturdum
+        PaymentMethod cash = new CashPayment();
+        order2.setPaymentMethod(cash);
+        
+        order2.completeOrder();//ödemeyi yap ve bitir
+        
+        
+        
     }
     
 }
