@@ -15,6 +15,10 @@ public class Order {
     private List<MenuItem> items;
     private String status; // Örn: "Hazırlanıyor", "Teslim Edildi"
 
+    //polimorfizm yaptık bunu arayüz (interface) şeklinde tuttum tutulması gerekiyor
+    private PaymentMethod paymentMethod;
+    
+    
     public Order(String id, Customer customer, Restaurant restaurant) {
         this.id = id;
         this.customer = customer;
@@ -37,16 +41,46 @@ public class Order {
         }
         return total;
     }
+    
+    //ödeme yöntemini belirme kısmı burada oluyor(kart mı nakit mi)
+    public void setPaymentMeethod(PaymentMethod paymentMethod) {
+    	this.paymentMethod=paymentMethod;
+    	
+    }
+    
+    //sipariş tamamlama işlemi
+    public void completeOrder() {
+    	double total = calculateTotal();
+    	
+    	if (paymentMethod !=null) {
+    		boolean success = paymentMethod.pay(total);//polimorfizm çalıştıgı yer
+    		this.status="Odendi ve Hazirlaniyor";
+    		System.out.println("Sipariş başarıyla tamamlandı! Durum:"+this.status);
+    	}
+    } else {
+    	System.out.println("HATA:Lütfen bir ödeme yöntemi seçiniz!!");
+    }
+
+
 
     // Getter ve Setterlar bölümü
-    public String getId() { return id; }
-    
-    public Customer getCustomer() { return customer; }
-    
-    public Restaurant getRestaurant() { return restaurant; }
-    
-    public List<MenuItem> getItems() { return items; }
-    
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public String getId() {
+    	return id;
+    	}
+    public Customer getCustomer() {
+    	return customer;
+    	}
+    public Restaurant getRestaurant() {
+    	return restaurant;
+    	}
+    public List<MenuItem> getItems() {
+    	return items;
+    	}
+    public String getStatus() {
+    	return status;
+    	}
+    //elle ödeme yöntemini denemek için kullanacağım set fonksiyonu
+  //  public void setStatus(String status) {
+  //  this.status = status;
+  //  }
 }
