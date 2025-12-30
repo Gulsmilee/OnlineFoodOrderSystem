@@ -22,6 +22,25 @@ public class Main {
         myRestaurant.addMenuItem(m3);
         
         System.out.println("Restauran menüsü hazır :))");
+        
+        System.out.println("\n------------------------------------------------\n");
+        
+        //3. Senaryo 1: Kredi kartı ile sipariş verimi
+        System.out.println(">>>Kredi kartı ile sipariş<<<");
+        
+        Order order1 = new Order("SIPARIS-001", c1, myRestaurant);
+        order1.addItem(m1);
+        order1.addItem(m2);
+        order1.addItem(m3);
+        
+        System.out.println("Toplam TUTAR:" + order1.calculateTotal()+"TL");
+        
+        //Polimorfizm: PaymentMethod tipinde CreditCardPayment oluşturuyoruz
+        PaymentMethod creditCard = new CreditCardPayment("1234-5678-9012-3456","401");
+        order1.setPaymentMethod(creditCard);
+        
+        order1.completeOrder();//ödemeyi yap ve bitir
+        
     }
     
 }
