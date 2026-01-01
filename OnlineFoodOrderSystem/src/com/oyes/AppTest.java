@@ -60,17 +60,19 @@ class AppTest {
     // Not: Bu testi yapabilmek için CreditCardPayment sınıfındaki 'isValidLuhn' metodunu
     // 'private' yerine 'public' yapman veya dolaylı test etmen gerekir.
     // Biz burada dolaylı yoldan, geçerli ve geçersiz kart deneyerek test ediyoruz.
- // TEST 4: Luhn Algoritması (Kredi Kartı) Testi
+ // // TEST 4: Luhn Algoritması (Kredi Kartı) Testi
     @Test
     void testLuhnAlgorithm() {
-        // Matematiksel olarak GEÇERLİ bir test kart numarası (4111...)
-        CreditCardPayment validCard = new CreditCardPayment("4111111111111111", "123");
+        // 1. Matematiksel olarak GERÇEKTEN GEÇERLİ bir kart (Sonu 2)
+        // Hesap: 4 -> 8, Son digit 2 -> 2. Toplam=10. 10%10==0.
+        CreditCardPayment validCard = new CreditCardPayment("4000000000000002", "123");
         
         // Bu kartın kabul edilmesi lazım (assertTrue)
         assertTrue(validCard.pay(10.0), "Geçerli kart reddedildi!");
 
-        // Matematiksel olarak GEÇERSİZ bir kart numarası
-        CreditCardPayment invalidCard = new CreditCardPayment("1234567812345670", "123");
+        // 2. Matematiksel olarak GERÇEKTEN GEÇERSİZ bir kart (Sonu 1)
+        // Hesap: 4 -> 8, Son digit 1 -> 1. Toplam=9. 9%10!=0.
+        CreditCardPayment invalidCard = new CreditCardPayment("4000000000000001", "123");
         
         // Bu kartın reddedilmesi lazım (assertFalse)
         assertFalse(invalidCard.pay(10.0), "Geçersiz kart kabul edildi!");
