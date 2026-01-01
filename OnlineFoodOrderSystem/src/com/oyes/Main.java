@@ -1,64 +1,237 @@
 package com.oyes;
 
+import java.util.List;
+import java.util.Scanner;
+
 public class Main {
 
-    public static void main(String[] args) {
-        System.out.println("=== OYES (Online Yemek Siparis Sistemi) BAŞLATILIYOR ===\n");
+    static List<User> users;
+    static Restaurant restaurant;
+    static Scanner scanner = new Scanner(System.in);
+    static User loggedInUser = null;
 
-        // 1. Müşteri Oluşturma (Giriş Yapma)
-        Customer c1 = new Customer("C-101", "Gülbahar", "gul@mail.com", "pass123", "Kadikoy, Istanbul", "555-9988");
-        c1.login();
+    public static void main(String[] args) {
+        System.out.println("=== OYES SİSTEMİ BAŞLATILIYOR ===");
         
-        System.out.println("\n------------------------------------------------\n");
-        //2. Restaurant ve Menü oluşturma
-        Restaurant myRestaurant = new Restaurant("Lezzet Durağı",4.9,"Besiktas,Istanbul");
+        // Verileri yükle
+        users = FileHelper.loadUsers("users.csv");
+        List<MenuItem> menuItems = FileHelper.loadMenu("menu.csv");
         
-        MenuItem m1 = new MenuItem("Adana kebap","Acılı,kozlenmiş biberli",250.0);
-        MenuItem m2 = new MenuItem("Ayran", "Bol köpüklü",30.0);
-        MenuItem m3 = new MenuItem("Sufle","Bol çikolatalı",150.0);
-        
-        myRestaurant.addMenuItem(m1);
-        myRestaurant.addMenuItem(m2);
-        myRestaurant.addMenuItem(m3);
-        
-        System.out.println("Restauran menüsü hazır :))");
-        
-        System.out.println("\n------------------------------------------------\n");
-        
-        //3. Senaryo 1: Kredi kartı ile sipariş verimi
-        System.out.println(">>>Kredi kartı ile sipariş<<<");
-        
-        Order order1 = new Order("SIPARIS-001", c1, myRestaurant);
-        order1.addItem(m1);
-        order1.addItem(m2);
-        order1.addItem(m3);
-        
-        System.out.println("Toplam TUTAR:" + order1.calculateTotal()+"TL");
-        
-        //Polimorfizm: PaymentMethod tipinde CreditCardPayment oluşturuyoruz
-        PaymentMethod creditCard = new CreditCardPayment("1234-5678-9012-3456","401");
-        order1.setPaymentMethod(creditCard);
-        
-        order1.completeOrder();//ödemeyi yap ve bitir
-        
-        System.out.println("\n------------------------------------------------\n");
-        
-        //4. SEnaryo2: Nakit ile sipariş
-        System.out.println(">>>Senaryo2: Nakit ile Sipariş<<<");
-        Order order2= new Order("SIPARIS-002",c1,myRestaurant);
-        order2.addItem(m2);
-        order2.addItem(m3);
-        
-        System.out.println("Toplam Tutar:"+ order2.calculateTotal()+"TL");
-        
-        //Polimorfizm:PaymentMethod tipinde CashPayment oluşturdum
-        PaymentMethod cash = new CashPayment();
-        order2.setPaymentMethod(cash);
-        
-        order2.completeOrder();//ödemeyi yap ve bitir
-        
-        
-        
+        restaurant = new Restaurant("Lezzet Dünyası");
+        for (MenuItem item : menuItems) {
+            restaurant.addMenuItem(item);
+        }
+
+        // --- GİRİŞ / KAYIT DÖNGÜSÜ ---
+        boolean loginSuccess = false;
+        while (!loginSuccess) {
+            System.out.println("\n--- HOŞGELDİNİZ ---");
+            System.out.println("1. Giriş Yap");
+            System.out.println("2. Kayıt Ol (Yeni Kullanıcı)");
+            System.out.print("Seçiminiz: ");
+            
+            int choice = -1;
+            try {
+                choice = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Lütfen sayı giriniz!");
+                continue;
+            }
+
+            if (choice == 1) {
+                // Giriş İşlemi
+                System.out.print("E-posta: ");
+                String email = scanner.nextLine();
+                System.out.print("Şifre: ");
+                String pass = scanner.nextLine();
+                
+                loggedInUser = login(email, pass);
+                if (loggedInUser != null) {
+                    loginSuccess = true;
+                    System.out.println("\n>>> Başarıyla giriş yapıldı. Hoşgeldin, " + loggedInUser.getName());
+                } else {
+                    System.out.println("!!! Hatalı E-posta veya Şifre. Tekrar deneyin veya kayıt olun.");
+                }
+            } 
+            else if (choice == 2) {
+                // Kayıt İşlemi
+                register();
+            } 
+            else {
+                System.out.println("Geçersiz seçim!");
+            }
+        }
+
+        // --- ANA MENÜ (SİMÜLASYON) ---
+        boolean exit = false;
+        while (!exit) {
+            System.out.println("\n--- ANA MENÜ ---");
+            System.out.println("1. Menüyü Gör");
+            System.out.println("2. Bakiye Sorgula / Yükle");
+            System.out.println("3. Sipariş Ver");
+            System.out.println("0. Çıkış");
+            System.out.print("Seçiminiz: ");
+            
+            int mainChoice = -1;
+            try {
+                // nextInt yerine parse kullanarak buffer hatasını önlüyoruz
+                String input = scanner.nextLine();
+                mainChoice = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                mainChoice = -1;
+            }
+
+            switch (mainChoice) {
+                case 1:
+                    showMenu();
+                    break;
+                case 2:
+                    balanceOperations();
+                    break;
+                case 3:
+                    placeOrder();
+                    break;
+                case 0:
+                    exit = true;
+                    System.out.println("Çıkış yapılıyor... İyi günler!");
+                    break;
+                default:
+                    System.out.println("Geçersiz seçim! Lütfen tekrar deneyin.");
+            }
+        }
     }
-    
+
+    // --- METODLAR ---
+
+    public static User login(String email, String password) {
+        for (User u : users) {
+            if (u.getEmail().equals(email) && u.getPassword().equals(password)) {
+                return u;
+            }
+        }
+        return null;
+    }
+
+    // YENİ: Kayıt Olma Metodu
+    public static void register() {
+        System.out.println("\n--- YENİ KULLANICI KAYDI ---");
+        System.out.print("Adınız Soyadınız: ");
+        String name = scanner.nextLine();
+        
+        System.out.print("E-posta Adresiniz: ");
+        String email = scanner.nextLine();
+        
+        // E-posta kontrolü (Aynı mail var mı?)
+        for(User u : users) {
+            if(u.getEmail().equals(email)) {
+                System.out.println("Bu e-posta zaten kayıtlı!");
+                return;
+            }
+        }
+
+        System.out.print("Şifreniz: ");
+        String pass = scanner.nextLine();
+
+        // Otomatik ID oluşturma (Listenin boyutu + 1)
+        String newId = String.valueOf(users.size() + 1);
+        double startBalance = 0.0; // Yeni üye 0 TL ile başlar
+
+        // Yeni kullanıcı oluştur
+        User newUser = new Customer(newId, name, email, pass, startBalance, "Adres Yok", "Tel Yok");
+        
+        // 1. Listeye ekle (Anlık kullanım için)
+        users.add(newUser);
+        
+        // 2. Dosyaya kaydet (Kalıcılık için)
+        FileHelper.saveUser("users.csv", newUser);
+        
+        System.out.println(">>> Kayıt Başarılı! Şimdi giriş yapabilirsiniz.");
+    }
+
+    public static void showMenu() {
+        System.out.println("\n--- YEMEK LİSTESİ ---");
+        List<MenuItem> menu = restaurant.getMenu();
+        for (int i = 0; i < menu.size(); i++) {
+            System.out.println((i + 1) + ". " + menu.get(i));
+        }
+    }
+
+    public static void balanceOperations() {
+        System.out.println("Mevcut Bakiyeniz: " + loggedInUser.getBalance() + " TL");
+        System.out.print("Para yüklemek ister misiniz? (E/H): ");
+        String resp = scanner.nextLine();
+        if (resp.equalsIgnoreCase("E")) {
+            System.out.print("Yüklenecek Miktar: ");
+            try {
+                double amount = Double.parseDouble(scanner.nextLine());
+                loggedInUser.addBalance(amount);
+            } catch (NumberFormatException e) {
+                System.out.println("Hatalı miktar girdiniz.");
+            }
+        }
+    }
+
+    public static void placeOrder() {
+        Order order = new Order((Customer) loggedInUser);
+        boolean ordering = true;
+        
+        while (ordering) {
+            showMenu();
+            System.out.print("Sepete eklemek için numara girin (Bitirmek için 0): ");
+            int itemIndex = -1;
+            try {
+                itemIndex = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Lütfen sayı giriniz.");
+                continue;
+            }
+            
+            if (itemIndex == 0) {
+                ordering = false;
+            } else if (itemIndex > 0 && itemIndex <= restaurant.getMenu().size()) {
+                order.addItem(restaurant.getMenu().get(itemIndex - 1));
+            } else {
+                System.out.println("Geçersiz numara!");
+            }
+        }
+        
+        double total = order.calculateTotal();
+        if (total == 0) {
+            System.out.println("Sepetiniz boş, ana menüye dönülüyor.");
+            return;
+        }
+
+        System.out.println("Toplam Tutar: " + total + " TL");
+        System.out.println("Ödeme Yöntemi: 1-Nakit, 2-Kredi Kartı, 3-Cüzdan Bakiyesi, 0-İptal");
+        
+        int pType = -1;
+        try {
+            pType = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Hatalı seçim.");
+            return;
+        }
+        
+        if (pType == 1) {
+            order.setPaymentMethod(new CashPayment());
+            order.completeOrder();
+        } else if (pType == 2) {
+            System.out.print("Kart No Giriniz (Örn: 1234 5678...): ");
+            // DÜZELTME: nextLine() kullanarak tüm satırı alıyoruz
+            String cNo = scanner.nextLine();
+            
+            // Kart numarasındaki boşlukları temizle (1234 5678 -> 12345678)
+            String cleanCardNo = cNo.replace(" ", "");
+            
+            order.setPaymentMethod(new CreditCardPayment(cleanCardNo, "123"));
+            order.completeOrder();
+        } else if (pType == 3) {
+            if (loggedInUser.deductBalance(total)) {
+                System.out.println("Cüzdandan ödendi. Kalan: " + loggedInUser.getBalance());
+                order.printReceipt();
+            }
+        } else {
+            System.out.println("Sipariş iptal edildi.");
+        }
+    }
 }
