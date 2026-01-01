@@ -1,5 +1,10 @@
 package com.oyes;
 
+/**
+ * Müşteri sınıfı.
+ * User sınıfından kalıtım (Inheritance) alır.
+ * Ekstra olarak adres ve telefon bilgisi tutar.
+ */
 public class Customer extends User {
     
     private String address;
@@ -9,9 +14,12 @@ public class Customer extends User {
         super();
     }
 
-    // Constructor güncellendi: Şifreyi de alıp User'a gönderiyor
-    public Customer(String id, String name, String email, String password, String address, String phoneNumber) {
-        super(id, name, email, password); 
+    /**
+     * Müşteri oluşturucu metodu.
+     * User sınıfının constructor'ını (super) çağırır.
+     */
+    public Customer(String id, String name, String email, String password, double balance, String address, String phoneNumber) {
+        super(id, name, email, password, balance); 
         this.address = address;
         this.phoneNumber = phoneNumber;
     }
@@ -22,20 +30,8 @@ public class Customer extends User {
     public String getPhoneNumber() { return phoneNumber; }
     public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
 
-    public void viewMenu() {
-        System.out.println("Menü listeleniyor...");
-    }
-
-    public void placeOrder() {
-        System.out.println(getName() + " sipariş verdi.");
-    }
-
     @Override
     public String toString() {
-        return "Customer{" +
-                "name='" + getName() + '\'' +
-                ", address='" + address + '\'' +
-                ", phone='" + phoneNumber + '\'' +
-                '}';
+        return super.getName() + " (Bakiye: " + super.getBalance() + " TL) - " + address;
     }
 }

@@ -1,24 +1,65 @@
 package com.oyes;
 
+/**
+ * Kullanıcı sınıfı (Base Class).
+ * Sistemdeki tüm kullanıcıların temel özelliklerini taşır.
+ * Bakiye (Balance) yönetimi buraya eklenmiştir.
+ */
 public class User {
     
     private String id;
     private String name;
     private String email;
-    private String password; // YENİ EKLENEN KISIM
+    private String password;
+    private double balance; // Cüzdan Bakiyesi
 
+    // Boş Constructor (Nesne oluşturma kolaylığı için)
     public User() {
     }
 
-    // Constructor güncellendi: Artık şifre de istiyor
-    public User(String id, String name, String email, String password) {
+    /**
+     * Dolu Constructor.
+     *  id Kullanıcı ID'si
+     *  name Ad Soyad
+     *  email E-posta adresi
+     *  password Şifre
+     *  balance Başlangıç bakiyesi
+     */
+    public User(String id, String name, String email, String password, double balance) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
+        this.balance = balance;
     }
 
-    // Getter ve Setter Metodları
+    // --- Bakiye Yönetim Metodları ---
+
+    /**
+     * Hesaba para yükler.
+     *  amount Yüklenecek miktar
+     */
+    public void addBalance(double amount) {
+        this.balance += amount;
+        System.out.println(">> Hesaba " + amount + " TL yüklendi. Yeni Bakiye: " + this.balance + " TL");
+    }
+    
+    /**
+     * Hesaptan para düşer.
+     *  amount Düşülecek miktar
+     * @return Yeterli bakiye varsa true, yoksa false döner.
+     */
+    public boolean deductBalance(double amount) {
+        if (this.balance >= amount) {
+            this.balance -= amount;
+            return true;
+        } else {
+            System.out.println(">> HATA: Yetersiz Bakiye! Mevcut paranız: " + this.balance + " TL");
+            return false;
+        }
+    }
+
+    // --- Getter ve Setter Metodları ---
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
@@ -31,13 +72,11 @@ public class User {
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
 
-    public boolean login() {
-        System.out.println(this.name + " sisteme giris yapti.");
-        return true;
-    }
+    public double getBalance() { return balance; }
+    public void setBalance(double balance) { this.balance = balance; }
     
     @Override
     public String toString() {
-        return "User{" + "name='" + name + '\'' + ", email='" + email + '\'' + '}';
+        return "Kullanıcı: " + name + " | Bakiye: " + balance + " TL";
     }
 }
