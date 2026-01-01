@@ -23,89 +23,89 @@ classDiagram
         -String email
         -String password
         -double balance
-        +addBalance(amount: double)
-        +deductBalance(amount: double) : boolean
-        +getId() : String
-        +getName() : String
+        +addBalance(amount)
+        +deductBalance(amount) : boolean
     }
 
     class Customer {
         -String address
         -String phoneNumber
-        +Customer(id, name, email, pass, balance, addr, phone)
-        +toString() : String
+        +Customer(...)
     }
 
     class MenuItem {
         -String name
         -String description
         -double price
-        +MenuItem(name, description, price)
-        +toString() : String
+        +MenuItem(...)
     }
 
     class Restaurant {
         -String name
         -List~MenuItem~ menu
-        +addMenuItem(item: MenuItem)
-        +getMenu() : List~MenuItem~
+        +addMenuItem(item)
+        +getMenu()
     }
 
     class Order {
         -Customer customer
         -List~MenuItem~ items
         -PaymentMethod paymentMethod
-        +addItem(item: MenuItem)
+        +addItem(item)
         +calculateTotal() : double
-        +setPaymentMethod(pm: PaymentMethod)
         +completeOrder()
         +printReceipt()
     }
 
     class CashPayment {
-        +pay(amount: double) : boolean
+        +pay(amount) : boolean
     }
 
     class CreditCardPayment {
         -String cardNumber
-        -String cvv
-        +CreditCardPayment(cardNo, cvv)
-        +pay(amount: double) : boolean
-        -isValidLuhn(cardNo: String) : boolean
+        +pay(amount) : boolean
+        -isValidLuhn(cardNo) : boolean
     }
 
     class FileHelper {
-        +loadUsers(fileName: String) : List~User~
-        +saveUser(fileName: String, user: User)
-        +loadMenu(fileName: String) : List~MenuItem~
+        +loadUsers() : List~User~
+        +saveUser()
+        +loadMenu() : List~MenuItem~
     }
 
     class Main {
-        +main(args: String[])
-        +login(email, pass) : User
+        +main()
+        +login()
         +register()
-        +showMenu()
-        +placeOrder()
-        +balanceOperations()
     }
 
-    %% --- Relationships ---
-    %% Inheritance
-    Customer --|> User : Extends
+    %% --- İLİŞKİLER (RELATIONSHIPS) ---
 
-    %% Realization (Interface Implementation)
+    %% 1. KALITIM (Inheritance)
+    Customer --|> User : Extends (Kalıtım)
+
+    %% 2. POLİMORFİZM (Realization / Interface)
+    %% Kesik çizgili oklar Polimorfizmi temsil eder
     MenuItem ..|> Orderable : Implements
     CashPayment ..|> PaymentMethod : Implements
     CreditCardPayment ..|> PaymentMethod : Implements
 
-    %% Associations & Composition
-    Restaurant *-- MenuItem : Contains (Menu)
-    Order o-- MenuItem : Aggregates
-    Order --> Customer : Belongs to
-    Order --> PaymentMethod : Uses Strategy
+    %% 3. BİRE-ÇOK İLİŞKİLER (One-to-Many)
+    %% "1" restoranın "*" (çok) yemeği olur.
+    Restaurant "1" *-- "0..*" MenuItem : Composition (Menü)
     
-    %% Main Dependencies
+    %% "1" siparişin "*" (çok) yemeği olur.
+    Order "1" o-- "1..*" MenuItem : Aggregation (Sepet)
+
+    %% "1" Müşterinin "Çok" Siparişi olabilir (Sistemde tutulmasa da mantıken)
+    Order "0..*" --> "1" Customer : Belongs to
+
+    %% 4. STRATEJİ (Polimorfizm Kullanımı)
+    %% Sipariş, 1 tane ödeme yöntemi kullanır (Interface üzerinden)
+    Order --> "1" PaymentMethod : Uses (Polimorfizm)
+
+    %% 5. DİĞER BAĞLANTILAR
     Main --> Restaurant : Manages
     Main --> User : Manages
     Main --> FileHelper : Uses
-    Main --> Order : Creates
+    Main ..> Order : Creates
