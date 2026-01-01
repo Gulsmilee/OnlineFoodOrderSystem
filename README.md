@@ -4,86 +4,108 @@
 
 ```mermaid
 classDiagram
-    %% Arayüzler (Interfaces)
+    %% --- Interfaces ---
     class Orderable {
         <<interface>>
-        +getPrice() double
-        +getName() String
+        +getPrice() : double
+        +getName() : String
     }
 
     class PaymentMethod {
         <<interface>>
-        +pay(double amount) boolean
+        +pay(amount: double) : boolean
     }
 
-    %% Ana Sınıf (Base Class - Kapsülleme içerir)
+    %% --- Classes ---
     class User {
         -String id
         -String name
         -String email
         -String password
-        -String phoneNumber
-        -String address
-        +login() boolean
-        +register() boolean
-        +updateProfile() void
+        -double balance
+        +addBalance(amount: double)
+        +deductBalance(amount: double) : boolean
+        +getId() : String
+        +getName() : String
     }
 
-    %% Kalıtım (Inheritance) - Customer User'dan türer
     class Customer {
-        -List~Order~ orderHistory
-        +viewMenu() void
-        +addToCart(MenuItem item) void
-        +placeOrder(Order order) void
+        -String address
+        -String phoneNumber
+        +Customer(id, name, email, pass, balance, addr, phone)
+        +toString() : String
     }
 
-    %% Diğer Sınıflar
     class MenuItem {
         -String name
         -String description
         -double price
-        -String category
-        +getDetails() String
+        +MenuItem(name, description, price)
+        +toString() : String
     }
 
     class Restaurant {
         -String name
-        -double rating
         -List~MenuItem~ menu
-        +addMenuItem(MenuItem item) void
-        +removeMenuItem(MenuItem item) void
-        +getMenu() List~MenuItem~
+        +addMenuItem(item: MenuItem)
+        +getMenu() : List~MenuItem~
     }
 
     class Order {
-        -String orderId
-        -Date orderDate
-        -String status
+        -Customer customer
         -List~MenuItem~ items
-        -double totalAmount
         -PaymentMethod paymentMethod
-        +calculateTotal() double
-        +completeOrder() void
-    }
-
-    %% Polimorfizm Sınıfları
-    class CreditCardPayment {
-        -String cardNumber
-        -String cvv
-        +pay(double amount) boolean
+        +addItem(item: MenuItem)
+        +calculateTotal() : double
+        +setPaymentMethod(pm: PaymentMethod)
+        +completeOrder()
+        +printReceipt()
     }
 
     class CashPayment {
-        +pay(double amount) boolean
+        +pay(amount: double) : boolean
     }
 
-    %% İlişkiler
-    User <|-- Customer : Inheritance (Kalıtım)
-    Orderable <|.. MenuItem : Implements (Arayüz)
-    PaymentMethod <|.. CreditCardPayment : Implements
-    PaymentMethod <|.. CashPayment : Implements
+    class CreditCardPayment {
+        -String cardNumber
+        -String cvv
+        +CreditCardPayment(cardNo, cvv)
+        +pay(amount: double) : boolean
+        -isValidLuhn(cardNo: String) : boolean
+    }
+
+    class FileHelper {
+        +loadUsers(fileName: String) : List~User~
+        +saveUser(fileName: String, user: User)
+        +loadMenu(fileName: String) : List~MenuItem~
+    }
+
+    class Main {
+        +main(args: String[])
+        +login(email, pass) : User
+        +register()
+        +showMenu()
+        +placeOrder()
+        +balanceOperations()
+    }
+
+    %% --- Relationships ---
+    %% Inheritance
+    Customer --|> User : Extends
+
+    %% Realization (Interface Implementation)
+    MenuItem ..|> Orderable : Implements
+    CashPayment ..|> PaymentMethod : Implements
+    CreditCardPayment ..|> PaymentMethod : Implements
+
+    %% Associations & Composition
+    Restaurant *-- MenuItem : Contains (Menu)
+    Order o-- MenuItem : Aggregates
+    Order --> Customer : Belongs to
+    Order --> PaymentMethod : Uses Strategy
     
-    Restaurant "1" *-- "*" MenuItem : Composition
-    Customer "1" --> "*" Order : Creates
-    Order "*" o-- "*" MenuItem : Aggregation
-    Order "1" --> "1" PaymentMethod : Uses (Polimorfizm)
+    %% Main Dependencies
+    Main --> Restaurant : Manages
+    Main --> User : Manages
+    Main --> FileHelper : Uses
+    Main --> Order : Creates
