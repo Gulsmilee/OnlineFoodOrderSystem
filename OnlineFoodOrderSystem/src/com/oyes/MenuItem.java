@@ -6,12 +6,9 @@ package com.oyes;
  */
 public class MenuItem implements Orderable {
     
-    private String name;        // Yemek adı
-    private String description; // Açıklama (Örn: "Acılı, bol soğanlı")
-    private double price;       // Fiyat
-
-    public MenuItem() {
-    }
+    private String name;
+    private String description;
+    private double price;
 
     public MenuItem(String name, String description, double price) {
         this.name = name;
@@ -19,8 +16,6 @@ public class MenuItem implements Orderable {
         this.price = price;
     }
 
-    // --- Orderable Interface'inden gelen zorunlu metodlar ---
-    // Bu metodlar olmak ZORUNDA 
     @Override
     public double getPrice() {
         return price;
@@ -30,27 +25,10 @@ public class MenuItem implements Orderable {
     public String getName() {
         return name;
     }
-    
-    
-    // Getter ve Setter Metodları
-    public void setName(String name) {
-        this.name = name;
-    }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
+    // toString: Menüde nasıl görüneceğini belirler
     @Override
     public String toString() {
-        return name + " (" + price + " TL) - " + description;
+        return String.format("%-20s %-10s %s", name, price + " TL", description);
     }
 }

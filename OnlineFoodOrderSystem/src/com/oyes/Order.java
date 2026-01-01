@@ -4,35 +4,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Sipariş sınıfı.
- * Müşteri, Restoran ve Yemekleri bir araya getirildi.
+ * Sipariş Yönetim Sınıfı.
+ * Sepeti yönetir, toplam tutarı hesaplar ve ödemeyi işler.
  */
 public class Order {
     
-    private String id;
     private Customer customer;
-    private Restaurant restaurant;
     private List<MenuItem> items;
-    private String status; 
-    
-    // Polimorfizm: Ödeme yöntemi arayüz tipinde tutulur
     private PaymentMethod paymentMethod;
 
-    public Order(String id, Customer customer, Restaurant restaurant) {
-        this.id = id;
+    public Order(Customer customer) {
         this.customer = customer;
-        this.restaurant = restaurant;
         this.items = new ArrayList<>();
-        this.status = "Siparis Olusturuldu";
     }
 
-    // Siparişe yemek ekleme
     public void addItem(MenuItem item) {
         items.add(item);
         System.out.println(item.getName() + " sepete eklendi.");
     }
 
-    // Toplam tutarı hesaplama
     public double calculateTotal() {
         double total = 0;
         for (MenuItem item : items) {
@@ -41,39 +31,38 @@ public class Order {
         return total;
     }
 
-    // Ödeme yöntemini belirleme (Kart mı Nakit mi?)
     public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 
-    // Siparişi tamamlama işlemi
+    /**
+     * Siparişi tamamlar.
+     * Eğer kullanıcıda bakiye varsa düşer veya karttan çeker.
+     */
     public void completeOrder() {
         double total = calculateTotal();
         
-      
         if (paymentMethod != null) {
-            boolean success = paymentMethod.pay(total); // Polimorfizm burada çalışır
+            // Ödemeyi yapmayı dene
+            boolean success = paymentMethod.pay(total);
             
-            // Eğer ödeme başarılıysa durumu güncelle
             if (success) {
-                this.status = "Odendi ve Hazirlaniyor";
-                System.out.println("Sipariş başarıyla tamamlandı! Durum: " + this.status);
+                // Eğer nakit değil de bakiye kullanılıyorsa, burada düşülebilir.
+                System.out.println(">> Sipariş Başarıyla Tamamlandı!");
+                printReceipt();
             }
         } else {
-            // Bu else artık if bloğunun hemen bitiminde ve metodun içinde
-            System.out.println("HATA: Lütfen bir ödeme yöntemi seçiniz!!");
+            System.out.println("Ödeme yöntemi seçilmedi!");
         }
-    } // Metod burada bitiyor
+    }
 
-    // Getter Metodları
-    public String getId() { return id; }
-    public Customer getCustomer() { return customer; }
-    public Restaurant getRestaurant() { return restaurant; }
-    public List<MenuItem> getItems() { return items; }
-    public String getStatus() { return status; }
-    
-    // Manuel durum değiştirme fonksiyonu
-    // public void setStatus(String status) {
-    //    this.status = status;
-    // }
+    public void printReceipt() {
+        System.out.println("\n--- SİPARİŞ FİŞİ ---");
+        System.out.println("Müşteri: " + customer.getName());
+        for (MenuItem item : items) {
+            System.out.println("* " + item.getName() + "\t" + item.getPrice() + " TL");
+        }
+        System.out.println("TOPLAM: " + calculateTotal() + " TL");
+        System.out.println("--------------------\n");
+    }
 }
