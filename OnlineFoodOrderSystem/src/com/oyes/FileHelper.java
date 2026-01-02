@@ -38,16 +38,37 @@ public class FileHelper {
         return userList;
     }
 
-    // YENİ: Kullanıcıyı dosyaya kaydeder (Append Mode)
+    // Kullanıcıyı dosyaya kaydeder (Append Mode - Sona Ekleme)
+    // Kayıt Ol (Register) işlemi için kullanılır
     public static void saveUser(String fileName, User user) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true))) {
-            // Yeni satıra geçmeden önce kontrol edilebilir ama şimdilik direkt ekleyelim
-            // Format: id,name,email,password,balance
+            // Yeni satıra geç ve veriyi yaz
             String line = String.format("\n%s,%s,%s,%s,%s", 
                     user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getBalance());
             bw.write(line);
         } catch (IOException e) {
             System.out.println("Kayıt hatası: " + e.getMessage());
+        }
+    }
+
+    // --- YENİ EKLENEN METOD BURASI ---
+    // Şifre değiştiğinde tüm dosyayı baştan aşağı günceller (Overwrite Mode)
+    public static void updateAllUsers(String fileName, List<User> userList) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, false))) { 
+            // 'false' parametresi dosyanın içini silip baştan yazmasını sağlar
+            
+            // 1. Başlık satırını tekrar yazalım
+            bw.write("id,name,email,password,balance");
+            
+            // 2. Listedeki tüm kullanıcıları (yeni şifreli halleriyle) yazalım
+            for (User user : userList) {
+                bw.newLine(); // Alt satıra geç
+                String line = String.format("%s,%s,%s,%s,%s", 
+                        user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getBalance());
+                bw.write(line);
+            }
+        } catch (IOException e) {
+            System.out.println("Dosya güncelleme hatası: " + e.getMessage());
         }
     }
 

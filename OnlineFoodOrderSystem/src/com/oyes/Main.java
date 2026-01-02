@@ -29,44 +29,45 @@ public class Main {
         }
 
         // --- GİRİŞ / KAYIT DÖNGÜSÜ ---
-        // Kullanıcı giriş yapana kadar bu döngü dönmeye devam eder
+     // --- GİRİŞ / KAYIT DÖNGÜSÜ ---
         boolean loginSuccess = false;
         while (!loginSuccess) {
             System.out.println("\n--- Lezzet Dünyasına HOŞGELDİNİZ ---");
             System.out.println("1. Giriş Yap");
             System.out.println("2. Kayıt Ol (Yeni Kullanıcı)");
+            System.out.println("3. Şifremi Unuttum"); // YENİ SEÇENEK
             System.out.print("Seçiminiz: ");
             
             int choice = -1;
             try {
-                // Hata önleyici okuma (NextLine kullanımı)
                 choice = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
                 System.out.println("Lütfen sadece sayı giriniz!");
-                continue; // Döngü başına dön
+                continue;
             }
 
             if (choice == 1) {
-                // --- GİRİŞ İŞLEMİ ---
+                // Giriş İşlemi (Aynı kalacak)
                 System.out.print("E-posta: ");
                 String email = scanner.nextLine();
                 System.out.print("Şifre: ");
                 String pass = scanner.nextLine();
                 
-                // Listeden kullanıcıyı bulmaya çalış
                 loggedInUser = login(email, pass);
-                
                 if (loggedInUser != null) {
-                    loginSuccess = true; // Giriş başarılı, döngüden çık
+                    loginSuccess = true;
                     System.out.println("\n>>> Başarıyla giriş yapıldı. Hoşgeldin, " + loggedInUser.getName());
                 } else {
-                    System.out.println("!!! Hatalı E-posta veya Şifre. Tekrar deneyin veya kayıt olun.");
+                    System.out.println("!!! Hatalı E-posta veya Şifre.");
                 }
             } 
             else if (choice == 2) {
-                // --- KAYIT İŞLEMİ ---
                 register();
             } 
+            else if (choice == 3) {
+                // YENİ: Şifre sıfırlama metodunu çağır
+                forgotPassword();
+            }
             else {
                 System.out.println("Geçersiz seçim!");
             }
@@ -260,7 +261,7 @@ public class Main {
                 
                 // NOT: completeOrder içinde Luhn kontrolü başarısız olursa status değişmez
                 // Ama biz burada basitlik olsun diye "denendi" sayıp çıkıyoruz.
-                // İstersen burada da kontrol derinleştirilebilir ama şimdilik yeterli.
+                
                 order.completeOrder();
                 paymentSuccess = true;
                 
@@ -278,6 +279,37 @@ public class Main {
             } else {
                 System.out.println("Geçersiz seçim!");
             }
+        }
+    }
+ // Şifremi Unuttum Metodu
+    public static void forgotPassword() {
+        System.out.println("\n--- ŞİFRE SIFIRLAMA ---");
+        System.out.print("Sisteme kayıtlı E-posta adresinizi girin: ");
+        String email = scanner.nextLine();
+        
+        User foundUser = null;
+        // Kullanıcıyı e-posta ile bul
+        for (User u : users) {
+            if (u.getEmail().equals(email)) {
+                foundUser = u;
+                break;
+            }
+        }
+        
+        if (foundUser != null) {
+            System.out.println("Kullanıcı bulundu: " + foundUser.getName());
+            System.out.print("Yeni Şifrenizi Giriniz: ");
+            String newPass = scanner.nextLine();
+            
+            // 1. Hafızadaki bilgiyi güncelle
+            foundUser.setPassword(newPass);
+            
+            // 2. CSV dosyasını güncelle (Kalıcı olması için)
+            FileHelper.updateAllUsers("users.csv", users);
+            
+            System.out.println(">>> Şifreniz başarıyla güncellendi! Şimdi giriş yapabilirsiniz.");
+        } else {
+            System.out.println("!!! HATA: Bu e-posta adresiyle kayıtlı kullanıcı bulunamadı.");
         }
     }
 }
