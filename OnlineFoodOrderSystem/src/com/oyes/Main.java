@@ -4,117 +4,129 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * Ana Uygulama Sınıfı (Main).
- * Projenin beyni burasıdır. Kullanıcıyı karşılar, giriş yaptırır ve menüleri yönetir.
+ * Ana Uygulama Sınıfı.
+ * Güncellemeler:
+ * 1. Oturum kapatınca tekrar giriş ekranına döner (Sonsuz Döngü).
+ * 2. Sipariş sonrası puanlama (Değerlendirme) sistemi eklendi.
  */
 public class Main {
 
-    // Global Değişkenler (Tüm metodlardan erişilebilir)
     static List<User> users;
     static Restaurant restaurant;
     static Scanner scanner = new Scanner(System.in);
-    static User loggedInUser = null; // O an sisteme giren kullanıcıyı tutar
+    static User loggedInUser = null;
 
     public static void main(String[] args) {
         System.out.println("=== OYES SİSTEMİ BAŞLATILIYOR ===");
         
-        // 1. Verileri Dosyalardan Yükle (CSV Okuma)
+        // Verileri Yükle
         users = FileHelper.loadUsers("users.csv");
         List<MenuItem> menuItems = FileHelper.loadMenu("menu.csv");
         
-        // Restoranı oluştur ve menüyü içine ekle
         restaurant = new Restaurant("Lezzet Dünyası");
         for (MenuItem item : menuItems) {
             restaurant.addMenuItem(item);
         }
 
-        // --- GİRİŞ / KAYIT DÖNGÜSÜ ---
-     // --- GİRİŞ / KAYIT DÖNGÜSÜ ---
-        boolean loginSuccess = false;
-        while (!loginSuccess) {
-            System.out.println("\n--- Lezzet Dünyasına HOŞGELDİNİZ ---");
-            System.out.println("1. Giriş Yap");
-            System.out.println("2. Kayıt Ol (Yeni Kullanıcı)");
-            System.out.println("3. Şifremi Unuttum"); // YENİ SEÇENEK
-            System.out.print("Seçiminiz: ");
-            
-            int choice = -1;
-            try {
-                choice = Integer.parseInt(scanner.nextLine());
-            } catch (NumberFormatException e) {
-                System.out.println("Lütfen sadece sayı giriniz!");
-                continue;
-            }
+        // --- ANA SİSTEM DÖNGÜSÜ (Programın Kapanmaması İçin) ---
+        boolean systemRunning = true;
+        
+        while (systemRunning) {
+            loggedInUser = null; // Her başa döndüğünde kullanıcıyı sıfırla (Logout)
+            boolean loginSuccess = false;
 
-            if (choice == 1) {
-                // Giriş İşlemi (Aynı kalacak)
-                System.out.print("E-posta: ");
-                String email = scanner.nextLine();
-                System.out.print("Şifre: ");
-                String pass = scanner.nextLine();
+            // --- 1. GİRİŞ EKRANI DÖNGÜSÜ ---
+            while (!loginSuccess && systemRunning) {
+                System.out.println("\n========================================");
+                System.out.println("      Lezzet Dünyasına HOŞGELDİNİZ      ");
+                System.out.println("========================================");
+                System.out.println("1. Giriş Yap");
+                System.out.println("2. Kayıt Ol (Yeni Kullanıcı)");
+                System.out.println("3. Şifremi Unuttum");
+                System.out.println("0. SİSTEMİ KAPAT"); // Programı buradan kapatacağız
+                System.out.print("Seçiminiz: ");
                 
-                loggedInUser = login(email, pass);
-                if (loggedInUser != null) {
-                    loginSuccess = true;
-                    System.out.println("\n>>> Başarıyla giriş yapıldı. Hoşgeldin, " + loggedInUser.getName());
-                } else {
-                    System.out.println("!!! Hatalı E-posta veya Şifre.");
+                int choice = -1;
+                try {
+                    choice = Integer.parseInt(scanner.nextLine());
+                } catch (NumberFormatException e) {
+                    System.out.println("Lütfen sayı giriniz!");
+                    continue;
                 }
-            } 
-            else if (choice == 2) {
-                register();
-            } 
-            else if (choice == 3) {
-                // YENİ: Şifre sıfırlama metodunu çağır
-                forgotPassword();
-            }
-            else {
-                System.out.println("Geçersiz seçim!");
-            }
-        }
 
-        // --- ANA MENÜ (SİMÜLASYON) ---
-        // Giriş yapıldıktan sonra programın ana akışı burada döner
-        boolean exit = false;
-        while (!exit) {
-            System.out.println("\n--- ANA MENÜ ---");
-            System.out.println("1. Menüyü Gör");
-            System.out.println("2. Bakiye Sorgula / Yükle");
-            System.out.println("3. Sipariş Ver");
-            System.out.println("0. Çıkış");
-            System.out.print("Seçiminiz: ");
-            
-            int mainChoice = -1;
-            try {
-                String input = scanner.nextLine();
-                mainChoice = Integer.parseInt(input);
-            } catch (NumberFormatException e) {
-                mainChoice = -1;
+                if (choice == 1) {
+                    System.out.print("E-posta: ");
+                    String email = scanner.nextLine();
+                    System.out.print("Şifre: ");
+                    String pass = scanner.nextLine();
+                    
+                    loggedInUser = login(email, pass);
+                    if (loggedInUser != null) {
+                        loginSuccess = true;
+                        System.out.println("\n>>> Başarıyla giriş yapıldı. Hoşgeldin, " + loggedInUser.getName());
+                    } else {
+                        System.out.println("!!! Hatalı E-posta veya Şifre.");
+                    }
+                } 
+                else if (choice == 2) {
+                    register();
+                } 
+                else if (choice == 3) {
+                    forgotPassword();
+                }
+                else if (choice == 0) {
+                    System.out.println("Sistem kapatılıyor... Güle güle!");
+                    systemRunning = false; // Ana döngüyü kırar ve program biter
+                }
+                else {
+                    System.out.println("Geçersiz seçim!");
+                }
             }
 
-            switch (mainChoice) {
-                case 1:
-                    showMenu(); // Menüyü yazdır
-                    break;
-                case 2:
-                    balanceOperations(); // Para yükleme işlemleri
-                    break;
-                case 3:
-                    placeOrder(); // Sipariş verme işlemleri (Ödeme burada)
-                    break;
-                case 0:
-                    exit = true; // Döngüyü kırar ve programı kapatır
-                    System.out.println("Çıkış yapılıyor... İyi günler!");
-                    break;
-                default:
-                    System.out.println("Geçersiz seçim! Lütfen tekrar deneyin.");
+            // Eğer sistem kapatıldıysa aşağıdaki menüye hiç girme
+            if (!systemRunning) break;
+
+            // --- 2. KULLANICI MENÜSÜ (SİMÜLASYON) ---
+            boolean userSessionActive = true;
+            while (userSessionActive) {
+                System.out.println("\n--- ANA MENÜ (" + loggedInUser.getName() + ") ---");
+                System.out.println("1. Menüyü Gör");
+                System.out.println("2. Bakiye Sorgula / Yükle");
+                System.out.println("3. Sipariş Ver");
+                System.out.println("0. Oturumu Kapat (Giriş Ekranına Dön)");
+                System.out.print("Seçiminiz: ");
+                
+                int mainChoice = -1;
+                try {
+                    String input = scanner.nextLine();
+                    mainChoice = Integer.parseInt(input);
+                } catch (NumberFormatException e) {
+                    mainChoice = -1;
+                }
+
+                switch (mainChoice) {
+                    case 1:
+                        showMenu();
+                        break;
+                    case 2:
+                        balanceOperations();
+                        break;
+                    case 3:
+                        placeOrder();
+                        break;
+                    case 0:
+                        userSessionActive = false; // Bu döngüden çıkar, en üstteki döngüye döner
+                        System.out.println("Oturum kapatılıyor...");
+                        break;
+                    default:
+                        System.out.println("Geçersiz seçim! Lütfen tekrar deneyin.");
+                }
             }
         }
     }
 
-    // --- YARDIMCI METODLAR ---
+    // --- METODLAR ---
 
-    // Kullanıcıyı e-posta ve şifreye göre listede arar
     public static User login(String email, String password) {
         for (User u : users) {
             if (u.getEmail().equals(email) && u.getPassword().equals(password)) {
@@ -124,40 +136,50 @@ public class Main {
         return null;
     }
 
-    // Yeni kullanıcı kaydı alır ve CSV'ye yazar
     public static void register() {
         System.out.println("\n--- YENİ KULLANICI KAYDI ---");
         System.out.print("Adınız Soyadınız: ");
         String name = scanner.nextLine();
-        
         System.out.print("E-posta Adresiniz: ");
         String email = scanner.nextLine();
         
-        // Aynı mail adresi var mı kontrolü
         for(User u : users) {
             if(u.getEmail().equals(email)) {
                 System.out.println("Bu e-posta zaten kayıtlı!");
                 return;
             }
         }
-
         System.out.print("Şifreniz: ");
         String pass = scanner.nextLine();
-
-        // Otomatik ID ver ve bakiyeyi 0 yap
         String newId = String.valueOf(users.size() + 1);
-        double startBalance = 0.0; 
-
-        // Polymorphism: Herkesi Customer olarak oluşturuyoruz
-        User newUser = new Customer(newId, name, email, pass, startBalance, "Adres Yok", "Tel Yok");
-        
-        users.add(newUser); // Listeye ekle
-        FileHelper.saveUser("users.csv", newUser); // Dosyaya kaydet
-        
+        User newUser = new Customer(newId, name, email, pass, 0.0, "Adres Yok", "Tel Yok");
+        users.add(newUser);
+        FileHelper.saveUser("users.csv", newUser);
         System.out.println(">>> Kayıt Başarılı! Şimdi giriş yapabilirsiniz.");
     }
+    
+    public static void forgotPassword() {
+        System.out.println("\n--- ŞİFRE SIFIRLAMA ---");
+        System.out.print("E-posta adresiniz: ");
+        String email = scanner.nextLine();
+        User foundUser = null;
+        for (User u : users) {
+            if (u.getEmail().equals(email)) {
+                foundUser = u;
+                break;
+            }
+        }
+        if (foundUser != null) {
+            System.out.print("Yeni Şifrenizi Giriniz: ");
+            String newPass = scanner.nextLine();
+            foundUser.setPassword(newPass);
+            FileHelper.updateAllUsers("users.csv", users);
+            System.out.println(">>> Şifre güncellendi!");
+        } else {
+            System.out.println("!!! Kullanıcı bulunamadı.");
+        }
+    }
 
-    // Menüdeki yemekleri listeler
     public static void showMenu() {
         System.out.println("\n--- YEMEK LİSTESİ ---");
         List<MenuItem> menu = restaurant.getMenu();
@@ -166,7 +188,6 @@ public class Main {
         }
     }
 
-    // Bakiye gösterme ve yükleme işlemleri
     public static void balanceOperations() {
         System.out.println("Mevcut Bakiyeniz: " + loggedInUser.getBalance() + " TL");
         System.out.print("Para yüklemek ister misiniz? (E/H): ");
@@ -177,17 +198,16 @@ public class Main {
                 double amount = Double.parseDouble(scanner.nextLine());
                 loggedInUser.addBalance(amount);
             } catch (NumberFormatException e) {
-                System.out.println("Hatalı miktar girdiniz.");
+                System.out.println("Hatalı miktar.");
             }
         }
     }
 
- // Sipariş oluşturma, sepete ekleme ve ödeme yapma
+    // --- SİPARİŞ ve DEĞERLENDİRME ---
     public static void placeOrder() {
         Order order = new Order((Customer) loggedInUser);
         boolean ordering = true;
         
-        // --- 1. SEPETE ÜRÜN EKLEME DÖNGÜSÜ ---
         while (ordering) {
             showMenu();
             System.out.print("Sepete eklemek için numara girin (Bitirmek için 0): ");
@@ -200,7 +220,7 @@ public class Main {
             }
             
             if (itemIndex == 0) {
-                ordering = false; // Siparişi tamamlamaya geç
+                ordering = false;
             } else if (itemIndex > 0 && itemIndex <= restaurant.getMenu().size()) {
                 order.addItem(restaurant.getMenu().get(itemIndex - 1));
             } else {
@@ -208,108 +228,77 @@ public class Main {
             }
         }
         
-        // Sepet toplamını hesapla
         double total = order.calculateTotal();
         if (total == 0) {
-            System.out.println("Sepetiniz boş, ana menüye dönülüyor.");
+            System.out.println("Sepetiniz boş.");
             return;
         }
 
         System.out.println("\n>>> Toplam Tutar: " + total + " TL");
-
-        // --- 2. ÖDEME DÖNGÜSÜ (YENİ KISIM) ---
-        // Ödeme başarılı olana kadar veya iptal edilene kadar döner
         boolean paymentSuccess = false;
         
         while (!paymentSuccess) {
-            System.out.println("\n--------------------------------");
-            System.out.println("Ödeme Yöntemi Seçiniz:");
-            System.out.println("1- Nakit");
-            System.out.println("2- Kredi Kartı");
-            System.out.println("3- Cüzdan Bakiyesi (Mevcut: " + loggedInUser.getBalance() + " TL)");
-            System.out.println("0- İptal Et ve Ana Menüye Dön");
-            System.out.println("--------------------------------");
-            System.out.print("Seçiminiz: ");
-            
+            System.out.println("1- Nakit | 2- Kredi Kartı | 3- Cüzdan | 0- İptal");
+            System.out.print("Ödeme Yöntemi Seçiniz: ");
             int pType = -1;
             try {
                 pType = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
-                System.out.println("Hatalı seçim, tekrar deneyin.");
                 continue;
             }
             
-            if (pType == 0) {
-                System.out.println("Sipariş iptal edildi. Ana menüye dönülüyor.");
-                return; // Metottan komple çıkar
-            }
+            if (pType == 0) return;
             
-            else if (pType == 1) {
-                // Nakit Ödeme
+            if (pType == 1) {
                 order.setPaymentMethod(new CashPayment());
                 order.completeOrder();
-                paymentSuccess = true; // Döngüden çıkmak için
-                
+                paymentSuccess = true;
             } else if (pType == 2) {
-                // Kredi Kartı Ödeme
-                System.out.print("Kart No Giriniz (Örn: 1234 5678...): ");
-                String cNo = scanner.nextLine();
-                String cleanCardNo = cNo.replace(" ", ""); 
-                
-                // Kart numarasını burada basitçe kontrol edebiliriz veya Luhn içeride bakar
-                order.setPaymentMethod(new CreditCardPayment(cleanCardNo, "123"));
-                
-                // NOT: completeOrder içinde Luhn kontrolü başarısız olursa status değişmez
-                // Ama biz burada basitlik olsun diye "denendi" sayıp çıkıyoruz.
-                
+                System.out.print("Kart No: ");
+                String cNo = scanner.nextLine().replace(" ", "");
+                order.setPaymentMethod(new CreditCardPayment(cNo, "123"));
                 order.completeOrder();
                 paymentSuccess = true;
-                
             } else if (pType == 3) {
-                // Cüzdan (Bakiye) ile ödeme
                 if (loggedInUser.deductBalance(total)) {
-                    System.out.println(">> Cüzdandan ödendi. Kalan Bakiyeniz: " + loggedInUser.getBalance() + " TL");
+                    System.out.println("Cüzdandan ödendi. Kalan: " + loggedInUser.getBalance());
                     order.printReceipt();
-                    paymentSuccess = true; // Başarılı, döngüden çık
+                    paymentSuccess = true;
                 } else {
-                    // --- KRİTİK NOKTA ---
-                    // paymentSuccess hala 'false'. Döngü başa döner!
-                    System.out.println("\n!!! HATA: Yetersiz Bakiye! Lütfen başka bir yöntem seçin veya İptal (0) yapın.");
+                    System.out.println("!!! Yetersiz Bakiye.");
                 }
             } else {
-                System.out.println("Geçersiz seçim!");
+                System.out.println("Geçersiz seçim.");
             }
+        }
+
+        // ÖDEME BAŞARILI OLDUYSA DEĞERLENDİRME AL
+        if (paymentSuccess) {
+            evaluateService();
         }
     }
- // Şifremi Unuttum Metodu
-    public static void forgotPassword() {
-        System.out.println("\n--- ŞİFRE SIFIRLAMA ---");
-        System.out.print("Sisteme kayıtlı E-posta adresinizi girin: ");
-        String email = scanner.nextLine();
-        
-        User foundUser = null;
-        // Kullanıcıyı e-posta ile bul
-        for (User u : users) {
-            if (u.getEmail().equals(email)) {
-                foundUser = u;
-                break;
-            }
-        }
-        
-        if (foundUser != null) {
-            System.out.println("Kullanıcı bulundu: " + foundUser.getName());
-            System.out.print("Yeni Şifrenizi Giriniz: ");
-            String newPass = scanner.nextLine();
+    
+   
+ // GÜNCELLENMİŞ: Değerlendirme Metodu (Gerçek Kayıt Yapar)
+    public static void evaluateService() {
+        System.out.println("\n----------------------------------------");
+        System.out.println("  Siparişiniz tamamlandı! Bizi puanlamayı unutmayınn :*)  ");
+        System.out.println("----------------------------------------");
+        System.out.print("Puanınız (1-5 arası): ");
+        try {
+            int score = Integer.parseInt(scanner.nextLine());
+            System.out.print("Yorumunuz (İsteğe bağlı): ");
+            String comment = scanner.nextLine();
             
-            // 1. Hafızadaki bilgiyi güncelle
-            foundUser.setPassword(newPass);
+            // CSV Formatında hazırlayalım: "KullanıcıAdı, Puan, Yorum"
+            String reviewData = loggedInUser.getName() + "," + score + "," + comment;
             
-            // 2. CSV dosyasını güncelle (Kalıcı olması için)
-            FileHelper.updateAllUsers("users.csv", users);
+            // Dosyaya kaydet
+            FileHelper.saveReview(reviewData);
             
-            System.out.println(">>> Şifreniz başarıyla güncellendi! Şimdi giriş yapabilirsiniz.");
-        } else {
-            System.out.println("!!! HATA: Bu e-posta adresiyle kayıtlı kullanıcı bulunamadı.");
+            System.out.println("\n>> Teşekkürler! Puanınız ve yorumunuz için. Tekrar bekleriz ^^ >3");
+        } catch (NumberFormatException e) {
+            System.out.println(">> Puanlama geçildi.");
         }
     }
 }

@@ -93,4 +93,16 @@ public class FileHelper {
         }
         return menuList;
     }
+    
+ // --- YENİ: Yorumları dosyaya kaydetme ---
+    public static void saveReview(String reviewLine) {
+        // reviews.csv dosyasına ekleme yapar (true = append mode)
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("reviews.csv", true))) {
+            bw.write(reviewLine);
+            bw.newLine(); // Alt satıra geç
+        } catch (IOException e) {
+            System.out.println("Yorum kaydedilemedi: " + e.getMessage());
+        }
+    }
+    
 }
