@@ -77,4 +77,27 @@ class AppTest {
         // Bu kartın reddedilmesi lazım (assertFalse)
         assertFalse(invalidCard.pay(10.0), "Geçersiz kart kabul edildi!");
     }
+    
+ // TEST 5: Ürün Çıkarma ve Tutar Güncelleme Testi (YENİ)
+    @Test
+    void testRemoveItemAndTotal() {
+        // 1. İki tane ürün oluşturalım
+        MenuItem burger = new MenuItem("Burger", "Leziz", 150.0);
+        MenuItem kola = new MenuItem("Kola", "Soğuk", 30.0);
+        
+        // 2. Sepete ekleyelim (Toplam: 180 TL olmalı)
+        testOrder.addItem(burger);
+        testOrder.addItem(kola);
+        
+        // Ara kontrol: Eklendi mi?
+        assertEquals(180.0, testOrder.calculateTotal(), "Ekleme sonrası tutar yanlış!");
+        
+        // 3. Burgeri sepetten SİLELİM
+        testOrder.removeItem(burger);
+        
+        // 4. Beklenen Sonuç: Sadece Kola kalmalı (30.0 TL)
+        // Eğer kod hatalıysa hala 180 veya 0 diyebilir.
+        assertEquals(30.0, testOrder.calculateTotal(), "Ürün silme sonrası tutar güncellenmedi!");
+    }
+    
 }
