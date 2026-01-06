@@ -11,7 +11,7 @@ import java.util.Scanner;
 public class Main {
 
     // --- GLOBAL DEĞİŞKENLER ---
-    // Programın her yerinden erişilebilmesi için static tanımladık.
+    // Programın her yerinden erişilebilmesi için static tanımladım.
     static List<User> users;          // Sistemdeki tüm kullanıcıların listesi
     static Restaurant restaurant;     // Restoran nesnesi (Menüyü tutar)
     static Scanner scanner = new Scanner(System.in); // Konsoldan veri almak için araç
@@ -139,8 +139,8 @@ public class Main {
     
     /**
      * Kullanıcı girişi kontrolü yapar.
-     * @param email Girilen e-posta
-     * @param password Girilen şifre
+     *  email Girilen e-posta
+     *  password Girilen şifre
      * @return Eşleşen User nesnesi veya null
      */
     public static User login(String email, String password) {
@@ -378,7 +378,7 @@ public class Main {
             String reviewData = loggedInUser.getName() + "," + score + "," + comment;
             FileHelper.saveReview(reviewData);
             
-            System.out.println("Geri bildiriminiz için teşekkürler! Tekrar bekleriz ^^");
+            System.out.println("Geri bildiriminiz için teşekkürler! Tekrar bekleriz ^^ <3 ");
         } catch(Exception e) { 
             System.out.println("Puanlama pas geçildi."); 
         }

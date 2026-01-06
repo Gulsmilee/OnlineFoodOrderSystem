@@ -24,7 +24,7 @@ public class Order {
         System.out.println(item.getName() + " sepete eklendi.");
     }
 
-    // --- YENİ: Ürün Çıkarma Metodu ---
+    // ---  Ürün Çıkarma Metodu ---
     // Listeden belirli bir ürünü siler.
     // "remove" metodu, listede o ürünü bulursa siler ve true döner.
     public void removeItem(MenuItem item) {
@@ -36,7 +36,7 @@ public class Order {
         }
     }
     
-    // --- YENİ: Sipariş Detaylarını Metin Olarak Verir ---
+    // ---  Sipariş Detaylarını Metin Olarak Verir ---
     // Bu metod, siparişi "orders.csv" dosyasına kaydederken kullanılır.
     // Örnek Çıktı: "Lahmacun + Ayran + Sufle"
     public String getOrderDetails() {
@@ -65,7 +65,6 @@ public class Order {
     }
 
     // Siparişi tamamlar ve ödemeyi gerçekleştirir
- // Eski "public void completeOrder()" metodunu sil, yerine bunu yapıştır:
     public boolean completeOrder() {
         double total = calculateTotal();
         
@@ -75,25 +74,27 @@ public class Order {
             return false;
         }
 
-        // paymentMethod.pay() metodunun sonucunu al (True/False)
+        // paymentMethod.pay() metodunun sonucunu al (True/False)(interface üzerinden ödeme yapilir)
         boolean isSuccess = this.paymentMethod.pay(total);
 
         if (isSuccess) {
             System.out.println("Sipariş işlemleri tamamlandı.");
             return true; // Main sınıfına "BAŞARILI" bilgisini gönder
         } else {
-            // Ödeme sınıfı (CreditCardPayment) zaten hatayı ekrana yazdırdı
+            
             return false; // Main sınıfına "BAŞARISIZ" bilgisini gönder
         }
     }
     // Ekrana fiş yazdırır (Sadece bilgi amaçlı)
     public void printReceipt() {
+    	System.out.println("--------------------");
         System.out.println("\n--- SİPARİŞ FİŞİ ---");
         System.out.println("Müşteri: " + customer.getName());
         for (MenuItem item : items) {
             System.out.println("- " + item.getName() + ": " + item.getPrice() + " TL");
         }
         System.out.println("TOPLAM: " + calculateTotal() + " TL");
+        System.out.println("--------------------");
         System.out.println("--------------------");
     }
 }

@@ -11,7 +11,7 @@ public class Customer extends User {
     private String phoneNumber;
 
     public Customer() {
-        super();
+        super(); //ust sınıfın constructorunu çalıştır
     }
 
     /**

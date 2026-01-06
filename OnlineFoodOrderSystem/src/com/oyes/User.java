@@ -2,6 +2,7 @@ package com.oyes;
 
 /**
  * Kullanıcı sınıfı (Base Class).
+ * hem verileri sakladığımız hemde para işlemlerini yönettiğimiz class
  * Sistemdeki tüm kullanıcıların temel özelliklerini taşır.
  * Bakiye (Balance) yönetimi buraya eklenmiştir.
  */
@@ -18,11 +19,7 @@ public class User {
     }
 
     /**
-     * Dolu Constructor.
-     *  id Kullanıcı ID'si
-     *  name Ad Soyad
-     *  email E-posta adresi
-     *  password Şifre
+     * Dolu Constructor
      *  balance Başlangıç bakiyesi
      */
     public User(String id, String name, String email, String password, double balance) {
@@ -60,6 +57,7 @@ public class User {
     }
 
     // --- Getter ve Setter Metodları ---
+    // get private değerin değişkenini  okur set değeri değiştirmemizi sağlar
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 

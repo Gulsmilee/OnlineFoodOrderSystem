@@ -15,7 +15,7 @@ public class MenuItem implements Orderable {
         this.description = description;
         this.price = price;
     }
-
+//interface metodlari orderableden gelen arayüz
     @Override
     public double getPrice() {
         return price;

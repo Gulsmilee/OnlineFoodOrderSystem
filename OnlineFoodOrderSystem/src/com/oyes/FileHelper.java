@@ -22,10 +22,10 @@ public class FileHelper {
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line;
             boolean isFirstLine = true;
-            while ((line = br.readLine()) != null) {
+            while ((line = br.readLine()) != null) { //satir satir okur
                 if (isFirstLine) { isFirstLine = false; continue; } // Başlık satırını atla
                 
-                String[] data = line.split(","); 
+                String[] data = line.split(","); //virgul ayırma
                 if(data.length < 5) continue; // Hatalı satır varsa atla
 
                 // Verileri parçala ve nesneye çevir
@@ -43,8 +43,10 @@ public class FileHelper {
         }
         return userList;
     }
-
+//yeni uye kaydı
     public static void saveUser(String fileName, User user) {
+    	// new FileWriter(fileName, TRUE) -> TRUE parametresi "EKLEME MODU" demektir.
+        // Yani eski verileri silme, dosyanın en altına yenisini ekle.
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true))) {
             String line = String.format("\n%s,%s,%s,%s,%s", 
                     user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getBalance());
@@ -54,7 +56,7 @@ public class FileHelper {
         }
     }
     
-    // Şifre değiştiğinde tüm dosyayı yenileyen metod
+    // Şifre değiştiğinde tüm dosyayı güncelleyen metod
     public static void updateAllUsers(String fileName, List<User> userList) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, false))) { 
             // 'false' = Dosyanın içini temizle ve baştan yaz
@@ -87,7 +89,7 @@ public class FileHelper {
         return menuList;
     }
     
-    // --- YENİ: Yorumları Kaydetme ---
+    // ---  Yorumları Kaydetme ---
     public static void saveReview(String reviewLine) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter("reviews.csv", true))) {
             bw.write(reviewLine);
@@ -120,6 +122,7 @@ public class FileHelper {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(";");
+                //filtreleme sadece giriş yapan kişinin e postasına ait siparişleri gösterir
                 // Eğer satırda 3 veri varsa ve e-posta eşleşiyorsa yazdır
                 if (data.length >= 3 && data[0].equals(userEmail)) {
                     System.out.println("• " + data[1] + " (Tutar: " + data[2] + " TL)");

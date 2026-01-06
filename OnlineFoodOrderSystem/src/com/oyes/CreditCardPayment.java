@@ -46,18 +46,18 @@ public class CreditCardPayment implements PaymentMethod {
         int nSum = 0;
         boolean isSecond = false;
         
-        for (int i = nDigits - 1; i >= 0; i--) {
+        for (int i = nDigits - 1; i >= 0; i--) { //ters dongu
             int d = cardNo.charAt(i) - '0'; // Karakteri sayıya çevir
     
-            if (isSecond == true)
+            if (isSecond == true) // her ikinci sayiyi ciftle
                 d = d * 2;
     
             // Sayı iki basamaklıysa basamakları topla (örn: 12 -> 1+2=3)
-            nSum += d / 10;
-            nSum += d % 10;
+            nSum += d / 10; //onlar basamagi
+            nSum += d % 10;//birler basamagi
     
-            isSecond = !isSecond;
+            isSecond = !isSecond; //bayragi tersine çevirir(bir sonkaki tur icin
         }
-        return (nSum % 10 == 0);
+        return (nSum % 10 == 0); //toplam 10 a bolunuyormu
     }
 }
