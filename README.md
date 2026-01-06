@@ -51,9 +51,10 @@ classDiagram
         -Customer customer
         -List~MenuItem~ items
         -PaymentMethod paymentMethod
+        +Order(customer: Customer)
         +addItem(item)
         +calculateTotal() : double
-        +completeOrder()
+        +completeOrder() : boolean
         +printReceipt()
     }
 
@@ -63,6 +64,9 @@ classDiagram
 
     class CreditCardPayment {
         -String cardNumber
+        -String cvv
+        -String expiryDate
+        +CreditCardPayment(cardNumber, cvv, expiryDate)
         +pay(amount) : boolean
         -isValidLuhn(cardNo) : boolean
     }
@@ -70,13 +74,21 @@ classDiagram
     class FileHelper {
         +loadUsers() : List~User~
         +saveUser()
+        +updateAllUsers()
         +loadMenu() : List~MenuItem~
+        +saveOrderToHistory()
+        +saveReview()
     }
 
     class Main {
+        -static List~User~ users
+        -static Restaurant restaurant
+        -static User loggedInUser
         +main()
         +login()
         +register()
+        +placeOrder()
+        +balanceOperations()
     }
 
     %% --- İLİŞKİLER (RELATIONSHIPS) ---
