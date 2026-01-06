@@ -2,4 +2,6 @@ id,name,email,password,balance
 1,Ahmet Hoca,ahmet@okul.edu,1234,500.0
 2,Gulbahar,gul@mail.com,pass123,1500.0
 3,Mehmet Ogrenci,mehmet@mail.com,9999,50.0
-4,gülbahar doğan,gul@gmail.com,1234,0.0
+4,gülbahar doğan,gul@gmail.com,1234,640.0
+5,efe,efe@gmail.com,123,0.0
+6,ela,ela@gmail.com,123,350.0

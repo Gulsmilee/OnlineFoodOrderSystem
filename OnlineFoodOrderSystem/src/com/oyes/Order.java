@@ -65,15 +65,27 @@ public class Order {
     }
 
     // Siparişi tamamlar ve ödemeyi gerçekleştirir
-    public void completeOrder() {
-        // Seçilen ödeme yönteminin 'pay' metodunu çağırır (Interface kullanımı)
-        if (paymentMethod.pay(calculateTotal())) {
-            System.out.println("Sipariş başarıyla tamamlandı.");
+ // Eski "public void completeOrder()" metodunu sil, yerine bunu yapıştır:
+    public boolean completeOrder() {
+        double total = calculateTotal();
+        
+        // Ödeme yöntemi seçilmemişse hata ver
+        if (this.paymentMethod == null) {
+            System.out.println("Hata: Ödeme yöntemi seçilmedi!");
+            return false;
+        }
+
+        // paymentMethod.pay() metodunun sonucunu al (True/False)
+        boolean isSuccess = this.paymentMethod.pay(total);
+
+        if (isSuccess) {
+            System.out.println("Sipariş işlemleri tamamlandı.");
+            return true; // Main sınıfına "BAŞARILI" bilgisini gönder
         } else {
-            System.out.println("Ödeme başarısız.");
+            // Ödeme sınıfı (CreditCardPayment) zaten hatayı ekrana yazdırdı
+            return false; // Main sınıfına "BAŞARISIZ" bilgisini gönder
         }
     }
-
     // Ekrana fiş yazdırır (Sadece bilgi amaçlı)
     public void printReceipt() {
         System.out.println("\n--- SİPARİŞ FİŞİ ---");
