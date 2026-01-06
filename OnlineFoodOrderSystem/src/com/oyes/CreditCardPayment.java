@@ -8,21 +8,32 @@ public class CreditCardPayment implements PaymentMethod {
     
     private String cardNumber;
     private String cvv;
+    private String expiryDate;
 
-    public CreditCardPayment(String cardNumber, String cvv) {
+    public CreditCardPayment(String cardNumber, String cvv, String expiryDate) {
         this.cardNumber = cardNumber;
         this.cvv = cvv;
+        this.expiryDate=expiryDate;
     }
 
     @Override
     public boolean pay(double amount) {
         // Önce kart numarasını doğrula
+        if(cvv == null || cvv.length() !=3) {
+        	System.out.println("Hata:Geçersiz CVV kodu!");
+        	return false;
+        }
+        if(expiryDate == null || expiryDate.length() !=5) {
+        	System.out.println("Hata:Geçersiz son kullanma tarihi(Örn:12/25 olmalı)!");
+        	return false;
+        }
         if (isValidLuhn(cardNumber)) {
-            System.out.println("Kart doğrulandı. " + amount + " TL çekiliyor...");
-            return true;
-        } else {
-            System.out.println("HATA: Geçersiz Kart Numarası!");
-            return false;
+        	System.out.println("Kredi kartı onaylandı:" + cardNumber.substring(0,4)+ "****");
+        	System.out.println("Ödeme başarıyla alındı:" +amount + "TL");
+        	return true;
+        }else {
+        	System.out.println("Hata:Geçersiz kart numarası!!");
+        	return false;
         }
     }
 
